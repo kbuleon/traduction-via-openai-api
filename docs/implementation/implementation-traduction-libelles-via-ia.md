@@ -59,7 +59,40 @@ Tous créés sous `src/` :
 - **Police `Microsoft YaHei UI`** sur la grille pour le rendu CJK (font-linking Windows en complément).
 - **`BuildSystemPrompt` / `NomLangue` publics et statiques** pour les tester unitairement.
 
-## 4. Écarts vs spec technique
+## 4. Emplacement de la clé API (garantie anti-fuite Git)
+
+**La clé API n'est jamais stockée dans le code ni dans le dépôt.** Elle est résolue à l'exécution
+par `SecretResolver.Resolve()` ([SecretResolver.cs](../../src/TraductionIA.App/SecretResolver.cs)),
+selon deux sources — toutes deux **hors du dépôt Git** :
+
+| Priorité | Source | Emplacement réel | Défini par |
+|----------|--------|------------------|------------|
+| 1 | User-secrets .NET | `%APPDATA%\Microsoft\UserSecrets\traductionia-openai-proto\secrets.json` (profil Windows) | `dotnet user-secrets set "OpenAI:ApiKey" "sk-..."` |
+| 2 (repli) | Variable d'environnement | `OPENAI_API_KEY` (session / système Windows) | `setx OPENAI_API_KEY "sk-..."` |
+
+Si aucune des deux n'est trouvée, la traduction est refusée avec un message d'aide (RG8) — voir
+`MainForm.cs` (`HasApiKey`).
+
+**Pourquoi c'est sûr pour GitHub :**
+
+- **Le `secrets.json` vit dans `%APPDATA%`**, en dehors de l'arborescence du projet : il ne peut donc
+  pas être ajouté à un commit par mégarde.
+- **La variable d'environnement** n'est écrite dans aucun fichier du projet.
+- **Filet de sécurité `.gitignore`** : les motifs `.env`, `.env.*`, `secrets.json`, `appsettings.*.local.json`,
+  `*.pfx`, `*.p12` sont ignorés. Même un `secrets.json` déposé par erreur à la racine ne serait pas versionné.
+- **Aucune clé réelle dans les sources** : les seules chaînes `sk-...` présentes sont des valeurs de
+  test factices (`sk-test-fake`, `sk-xyz-123` dans `TraductionIA.Tests`) et des exemples de documentation.
+- **En transit** : la clé n'est portée que par l'en-tête `Authorization: Bearer` du `HttpRequestMessage` ;
+  le corps JSON tracé (`RawRequest`) ne la contient jamais (vérifié par test — cf. §6).
+
+**Synchronisation à maintenir** : `<UserSecretsId>` dans `TraductionIA.App.csproj` et
+`SecretResolver.UserSecretsId` doivent rester identiques (`traductionia-openai-proto`), sinon la clé
+écrite par la CLI ne serait pas relue.
+
+> Réserve de sécurité : les user-secrets ne sont **pas chiffrés** (usage dev). Pour un chiffrement au
+> repos, passer par le Windows Credential Manager (DPAPI).
+
+## 5. Écarts vs spec technique
 
 - **Plateforme .NET 8 au lieu de .NET Framework 4.8** : contrainte levée d'un commun accord (la 4.8
   n'est pas compilable dans l'environnement courant). Les deux specs ont été amendées en conséquence
@@ -70,7 +103,7 @@ Tous créés sous `src/` :
 - **`OutputCleaner` extrait** comme classe dédiée (la spec le mentionnait comme étape de §7) pour la
   testabilité.
 
-## 5. Vérification
+## 6. Vérification
 
 - **Build** : `dotnet build TraductionIA.sln` → **succès, 0 avertissement, 0 erreur** pour les 3
   projets, y compris l'app WinForms (`net8.0-windows`).
@@ -93,7 +126,7 @@ dotnet build TraductionIA.sln -c Debug
 dotnet run --project TraductionIA.Tests -c Debug
 ```
 
-## 6. Reste à faire / limites
+## 7. Reste à faire / limites
 
 - **Non vérifié ici** (impossible dans l'environnement) :
   - l'**aller-retour réseau réel** vers l'API OpenAI (pas de `OPENAI_API_KEY` ; l'échange est prouvé
