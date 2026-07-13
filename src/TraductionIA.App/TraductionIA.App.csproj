@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Identifiant du Secret Manager .NET (dotnet user-secrets). Synchronisé avec SecretResolver.UserSecretsId. -->
+    <UserSecretsId>traductionia-openai-proto</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TraductionIA.Core\TraductionIA.Core.csproj" />
+  </ItemGroup>
+
+</Project>

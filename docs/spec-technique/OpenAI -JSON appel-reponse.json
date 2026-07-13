@@ -1,0 +1,53 @@
+--- Requête (corps JSON) ---
+{
+  "model": "gpt-4o-mini",
+  "temperature": 0,
+  "messages": [
+    {
+      "role": "system",
+      "content": "Tu es un traducteur. Traduis le terme fourni en anglais. Réponds UNIQUEMENT par le terme traduit, sans guillemets, sans ponctuation finale, sans explication."
+    },
+    {
+      "role": "user",
+      "content": "Client"
+    }
+  ]
+}
+--- Réponse ---
+{
+  "id": "chatcmpl-Dw9CV7MPv0g3wsoSj7fyUzZfD3yNQ",
+  "object": "chat.completion",
+  "created": 1782750763,
+  "model": "gpt-4o-mini-2024-07-18",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Client",
+        "refusal": null,
+        "annotations": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 52,
+    "completion_tokens": 1,
+    "total_tokens": 53,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": "fp_3516695052"
+}
+
