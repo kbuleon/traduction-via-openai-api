@@ -2,7 +2,7 @@
 date: 2026-07-13
 tags: [documentation, git, github]
 statut: validé
-projet: Traduction par IA (C:\sessions_claude_code\Protos\Traduction par IA)
+projet: Traduction par IA
 ---
 
 # Publier un projet sur GitHub — de zéro jusqu'au push

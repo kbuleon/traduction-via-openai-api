@@ -3,7 +3,7 @@ date: 2026-06-29
 tags: [implementation]
 statut: terminé
 spec_technique: docs/spec-technique/spec-technique-traduction-libelles-via-ia.md
-projet: Traduction par IA (C:\sessions_claude_code\Protos\Traduction par IA)
+projet: Traduction par IA
 ---
 
 # Implémentation — Traduction de libellés via une IA (OpenAI)
